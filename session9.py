@@ -267,9 +267,11 @@ def generate_stock_data(number_of_companies):
 
     CompanyStock = namedtuple('CompanyStock', "name symbol open high close market_cap company_weight",
                               defaults=[None] * 7)
+    CompanyStock.__doc__ = "Stock information for a company"
     CompanyStock.name.__doc__ = "Name of the company"
     CompanyStock.symbol.__doc__ = "Symbol of the company"
     CompanyStock.open.__doc__ = "Opening share price of the company"
+    CompanyStock.high.__doc__ = "Highest share price of the company for the day"
     CompanyStock.close.__doc__ = "Closing share price of the company"
     CompanyStock.market_cap.__doc__ = "Market capital of the company"
     CompanyStock.company_weight.__doc__ = "Weight of the company on stock exchange"
@@ -332,7 +334,7 @@ def stock_market_():
     current_market_value = sum(_new_market_value)
     print(f"Current Market Value: {current_market_value}")
     market_change_in_points = (current_market_value - opening_market_value) / opening_market_value
-    print(f"Change: {100 + market_change_in_points}")
+    print(f"Change: {100 + (market_change_in_points * 100)}")
 
 
 if __name__ == '__main__':

@@ -165,7 +165,7 @@ def test_dictionary_operations_avg_age():
                 _dict[key] = datetime.date(1800, 1, 1)
 
     # Calculate current age
-    age = date.today()-date(1800, 1, 1)
+    age = date.today() - date(1800, 1, 1)
 
     # Check the oldest_age shows age of all of them
     output = dictionary_operations(list_of_10_dicts)
@@ -308,7 +308,7 @@ def test_namedtuple_average_age():
         modified_list.append(_namedtuple._replace(birthdate=datetime.date(1800, 1, 1)))
 
     output = namedtuple_operations(modified_list)
-    assert (date.today()-date(1800, 1, 1)).days == output.average_age
+    assert (date.today() - date(1800, 1, 1)).days == output.average_age
 
 
 def test_speed():
@@ -364,3 +364,151 @@ def test_speed():
     print(f"Tuples are faster than dictionaries by {elapsed_dict / elapsed_named_tuple} times")
 
     assert elapsed_named_tuple < elapsed_dict
+
+
+def test_stock_data_generation():
+    """
+    Test case to check if the company stock data is generated
+    """
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    assert len(list_of_companies) == 100
+
+
+def test_datatype_of_stock_data():
+    """
+    Test case to check the datatype of the stock data
+    """
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    assert is_namedtuple_instance(list_of_companies[0])
+
+
+def test_docstring_of_generated_data():
+    """
+    Test case to check if the generated namedtuple data has docstring
+    """
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    sample_data = list_of_companies[0]
+    assert 'Stock information for a company' in sample_data.__doc__
+    assert 'Alias for field number' not in type(sample_data).name.__doc__
+    assert 'Alias for field number' not in type(sample_data).symbol.__doc__
+    assert 'Alias for field number' not in type(sample_data).open.__doc__
+    assert 'Alias for field number' not in type(sample_data).high.__doc__
+    assert 'Alias for field number' not in type(sample_data).close.__doc__
+    assert 'Alias for field number' not in type(sample_data).market_cap.__doc__
+    assert 'Alias for field number' not in type(sample_data).company_weight.__doc__
+
+
+def test_high_with_opening_and_closing_value():
+    """
+    Test case to check all the high values are greater than or equal to opening value and closing value
+    """
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    _conditions = [(company.high >= company.open) and (company.high >= company.close) for company in list_of_companies]
+
+    assert all(_conditions) is True
+
+
+def test_required_fields():
+    """
+    Test case to check if all the required fields are present in the generated data
+    """
+    # Expected fields
+    expected_fields = ('name', 'symbol', 'high', 'open', 'close')
+
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    sample_data = list_of_companies[0]
+    current_fields = sample_data._fields
+
+    conditions = [True for field in expected_fields if field in current_fields]
+    assert all(conditions) is True
+
+
+def test_symbols():
+    """
+    Test case to check if all the symbols are 3 capitalize alphabets without spaces and commas
+    """
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    conditions = [True for company in list_of_companies if company.symbol.isupper() and ',' not in company.symbol and ' ' not in company.symbol]
+
+    assert all(conditions) is True
+
+
+def test_weights_eq_one():
+    """
+    Test case to check if all the companies are weighted properly that is there sum of their weights is one
+    """
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    weights = []
+    [weights.append(company.company_weight) for company in list_of_companies]
+
+    assert round(sum(weights)) == 1
+
+
+def test_market_up_condition():
+    """
+    Test case to check points output if all the company's stocks are up by 10%
+    """
+    # Variables used for code flow in this scope
+    _new_market_value = []
+
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    for _company in list_of_companies:
+        new_company_value = add(_company.market_cap, truediv(mul(_company.market_cap, 10), 100))
+        _new_market_value.append(new_company_value)
+
+    current_market_value = sum(_new_market_value)
+    assert current_market_value > opening_market_value
+
+
+def test_market_down_condition():
+    """
+    Test case to check points output if all the company's stocks are down by 10%
+    """
+    # Variables used for code flow in this scope
+    _new_market_value = []
+
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    for _company in list_of_companies:
+        new_company_value = add(_company.market_cap, truediv(mul(_company.market_cap, -10), 100))
+        _new_market_value.append(new_company_value)
+
+    current_market_value = sum(_new_market_value)
+    assert current_market_value < opening_market_value
+
+
+def test_points_up_condition():
+    """
+    Test case to check if all the stocks are up by 20% then how much points are added to the market
+    """
+    # Variables used for code flow in this scope
+    _new_market_value = []
+
+    # Generate the stock data in namedtuple format for 100 companies
+    list_of_companies, opening_market_value, list_of_company_symbol = generate_stock_data(100)
+
+    for _company in list_of_companies:
+        new_company_value = add(_company.market_cap, truediv(mul(_company.market_cap, 20), 100))
+        _new_market_value.append(new_company_value)
+
+    current_market_value = sum(_new_market_value)
+    market_change_in_points = (current_market_value - opening_market_value) / opening_market_value
+
+    assert 120 == round(100 + (market_change_in_points * 100))

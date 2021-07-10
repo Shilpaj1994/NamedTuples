@@ -4,8 +4,8 @@
 
 There are two sections of code in this repo:
 
-- Part1 - Generating profiles and comparing performance of namedtuples and dictionaries
-- Part2 - Generating data for the stock market
+- Section 1 - Generating profiles and comparing performance of namedtuples and dictionaries
+- Section 2 - Generating data for the stock market
 
 
 
@@ -297,6 +297,11 @@ There are two sections of code in this repo:
   - `generate_stock_data`
   - `stock_market_`
 
+
+
+
+### Code Description
+
 - The first function is used to generate the high, opening and closing price of the stock. This function is used by `generate_stock_data` function for company stock data generation
 
   ```python
@@ -335,9 +340,11 @@ There are two sections of code in this repo:
   
       CompanyStock = namedtuple('CompanyStock', "name symbol open high close market_cap company_weight",
                                 defaults=[None] * 7)
+      CompanyStock.__doc__ = "Stock information for a company"
       CompanyStock.name.__doc__ = "Name of the company"
       CompanyStock.symbol.__doc__ = "Symbol of the company"
       CompanyStock.open.__doc__ = "Opening share price of the company"
+      CompanyStock.high.__doc__ = "Highest share price of the company for the day"
       CompanyStock.close.__doc__ = "Closing share price of the company"
       CompanyStock.market_cap.__doc__ = "Market capital of the company"
       CompanyStock.company_weight.__doc__ = "Weight of the company on stock exchange"
@@ -405,9 +412,28 @@ There are two sections of code in this repo:
       current_market_value = sum(_new_market_value)
       print(f"Current Market Value: {current_market_value}")
       market_change_in_points = (current_market_value - opening_market_value) / opening_market_value
-      print(f"Change: {100 + market_change_in_points}")
+      print(f"Change: {100 + (market_change_in_points * 100)}")
   
   ```
 
   
+
+### Test Cases
+
+The test cases are in `test_session9.py`
+
+Following are the test cases and their description
+
+| Sr. No. | Test Case                                  | Description                                                  |
+| ------- | ------------------------------------------ | ------------------------------------------------------------ |
+| 1       | `test_stock_data_generation`               | Test case to check if the company stock data is generated    |
+| 2       | `test_datatype_of_stock_data`              | Test case to check the datatype of the stock data            |
+| 3       | `test_docstring_of_generated_data`         | Test case to check if the generated namedtuple data has docstring |
+| 4       | `test_high_with_opening_and_closing_value` | Test case to check all the high values are greater than or equal to opening value and closing value |
+| 5       | `test_required_fields`                     | Test case to check if all the required fields are present in the generated data |
+| 6       | `test_symbols`                             | Test case to check if all the symbols are 3 capitalize alphabets without spaces and commas |
+| 7       | `test_weights_eq_one`                      | Test case to check if all the companies are weighted properly that is there sum of their weights is one |
+| 8       | `test_market_up_condition`                 | Test case to check points output if all the company's stocks are up by 10% |
+| 9       | `test_market_down_condition`               | Test case to check points output if all the company's stocks are down by 10% |
+| 10      | `test_points_up_condition`                 | Test case to check if all the stocks are up by 20% then how much points are added to the market |
 
